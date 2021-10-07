@@ -12,34 +12,38 @@ function createMenuItems(menuItems) {
 
 placeForMenuItems.insertAdjacentHTML('beforeend', createMenuItems(menuItems));
 
-const buttonOfTheme = document.querySelector('#theme-switch-toggle');
-buttonOfTheme.addEventListener('change', switchTheme);
+const Theme = {
+  LIGHT: 'light-theme',
+  DARK: 'dark-theme',
+};
 
-function switchTheme(e) {
-  const Theme = {
-    LIGHT: 'light-theme',
-    DARK: 'dark-theme',
-  };
-  if (document.body.classList.contains(Theme.LIGHT)) {
-    document.body.classList.remove(Theme.LIGHT);
-    document.body.classList.add(Theme.DARK);
+const bodyRef = document.querySelector('body');
+const checkboxRef = document.querySelector('#theme-switch-toggle');
 
-    let currentTheme = document.body.className;
-    localStorage.setItem('theme', currentTheme);
-    return;
+
+const updateTheme = (addTheme, removeTheme) => {
+bodyRef.classList.remove(removeTheme);
+bodyRef.classList.add(addTheme);
+};
+
+const onCheckboxChange = () => { 
+  if (checkboxRef.checked) {
+    localStorage.setItem('theme', Theme.DARK)
+    updateTheme(Theme.DARK, Theme.LIGHT)
+  } else {
+    localStorage.setItem('theme', Theme.LIGHT)
+    updateTheme(Theme.LIGHT, Theme.DARK)
   }
-
-  document.body.classList.remove(Theme.DARK);
-  document.body.classList.add(Theme.LIGHT);
-  let currentTheme = document.body.className;
-  localStorage.setItem('theme', currentTheme);
 }
 
-document.body.classList.add(localStorage.getItem('theme'));
-
-const themeChecked = () => {
-  if (localStorage.getItem('theme') === 'dark-theme') {
-    buttonOfTheme.setAttribute('checked', true);
+const  saveSettings = () => {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === Theme.DARK) {
+    checkboxRef.checked = 'true';
+    onCheckboxChange();
   }
-};
-themeChecked();
+}
+
+
+checkboxRef.addEventListener('change', onCheckboxChange)
+saveSettings()
